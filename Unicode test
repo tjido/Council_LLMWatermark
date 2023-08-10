@@ -1,0 +1,85 @@
+from typing import List
+import logging
+from string import Template
+import pandas as pd
+import tiktoken
+from llama_index import VectorStoreIndex, SimpleDirectoryReader, ServiceContext
+from llama_index.langchain_helpers.text_splitter import TokenTextSplitter
+from llama_index.node_parser import SimpleNodeParser
+from council.skills import LLMSkill, PromptToMessages
+from council.runners.budget import Budget
+from council.contexts import SkillContext
+from council.llm import OpenAILLM, LLMMessage
+from council.chains import Chain
+from council.agents import Agent
+from council.contexts import AgentContext, ChatHistory
+from council.prompt import PromptBuilder
+from cachetools import TTLCache
+import keyboard
+from document_retrieval import ChunkingTokenizer, DocRetrievalSkill, Retriever
+from evaluator import Evaluator
+from chatbot_controller import Controller
+from prompt import PROMPT, SYSTEM_MESSAGE  # Make sure this is defined
+
+# Define watermarking functions directly in the main script
+
+def generate_watermark(text, watermark_key="HIDDEN_WATERMARK"):
+    # Generate Unicode watermark based on the watermark key
+    watermark = "".join(chr(ord(char) + ord(watermark_key[i % len(watermark_key)])) for i, char in enumerate(text))
+    return watermark
+
+def embed_watermark(text, watermark):
+    # Embed the watermark into the text using a specified pattern
+    watermarked_text = "".join(char + watermark[i % len(watermark)] for i, char in enumerate(text))
+    return watermarked_text
+
+def extract_watermark(watermarked_text, watermark_key="HIDDEN_WATERMARK"):
+    # Extract the watermark from the watermarked text
+    extracted_watermark = "".join(chr(ord(char) - ord(watermark_key[i % len(watermark_key)])) for i, char in enumerate(watermarked_text))
+    return extracted_watermark
+
+def human_text(text):
+    # Remove the watermark from the text to get the human-readable content
+    return "".join(char for char in text if char.isalpha() or char.isspace())
+
+# Load environment variables
+import dotenv
+dotenv.load_dotenv()
+
+# Define constants
+DOC_RETRIEVAL_LLM = 'gpt-3.5-turbo'
+CONTROLLER_LLM = 'gpt-3.5-turbo'
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+ENCODING_NAME = "cl100k_base"
+MAX_CHUNK_SIZE = 256
+CHUNK_OVERLAP = 20
+NUM_RETRIEVED_DOCUMENTS = 50
+
+# Create a disk-based cache
+cache = TTLCache(maxsize=100, ttl=300)  # Configure cache for efficient data storage
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# Define other functions and classes as needed
+
+# ... (rest of the code)
+
+if __name__ == '__main__':
+    PDF_FILE_NAME = 'msft-10K-2022.pdf'
+    print('Extracting chunks from PDF File...')
+    doc_retrieval_skill = retrival_index(PDF_FILE_NAME)
+    print('Finish Extracting chunks!!!')
+    company_name = input('Enter company name: ')
+    print("You entered:", company_name)
+    print('Running LLM Agents on chunks...')
+    agent = load_agent(company_name=company_name, llm=DOC_RETRIEVAL_LLM)
+
+    # ... (rest of the code)
+
+    if result:
+        print('AI Generated Text: ')
+        response = result.best_message.message
+
+        # Generate and embed watermark
+        watermark_key = "HIDDEN_WATERMARK"
+       
