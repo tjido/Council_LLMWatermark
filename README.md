@@ -1,11 +1,13 @@
 # Differenciating AI content from Human Content Using UNICODE VALUES
 
-The Idea behind this Work is Motivated by this post. 
+The Idea behind this Work is Motivated by this post: https://acroll.substack.com/p/all-you-need-is-unicode
 
 ### IDEA
 Mark AI-written text with different Unicode values so that we can distinguish AI-written text from human-written text even though the letters look the same. Unicode works across all devices and websites, and doesn’t need any changes to how people use the Internet. Plus, the people behind the Unicode governing body include many of the companies who are building Generative AI.
 
-A world where we can tell the difference between human- and machine-generated content is better for humanity. We have labels for the things we put in our bodies; we should care as much about what we put in our minds.
+A world where we can tell the difference between human- and machine-generated content is better for humanity. We have labels for the things we put in our bodies; we should care as much about what we put in our minds. 
+
+In this project, we are distinguishing between text from a human (PDF documents) and text from the LLM.
 
 
 ### Step to reproduce the code.
